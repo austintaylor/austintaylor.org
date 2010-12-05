@@ -1,16 +1,6 @@
 ---
-type: regular
-state: draft
-tags: haskell, programming
-slug: learning-haskell
-generator: MacVim
 title: Learning Haskell
-format: markdown
 ---
-
-
-Learning Haskell
-================================
 
 I spent a couple of days reading [Haskell] [1] [tutorials] [1], and writing a little
 bit of [code] [3] in it. I find it to be a very attractive and exciting language.
@@ -20,8 +10,7 @@ I put together a few of the reasons why I am interested in Haskell.
   [2]: http://book.realworldhaskell.org/read
   [3]: http://gist.github.com/417389
 
-Strong Types, and Type Inference
---------------------------------
+### Strong Types, and Type Inference
 
 When I used to program Java, I always hated the type system. It just felt like
 it was constantly getting in your way, and it seldom gave you anything back.
@@ -44,20 +33,24 @@ supportive code for the high level functions can be totally undeclared, which is
 awesome, because it dramatically reduces the friction in breaking down an algorithm.
 Consider the following function.
 
-    toEnglish :: Int -> String
-    toEnglish x
-      | x < 0 = "negative " ++ toEnglish (-x)
-      | x < 20 = ones !! x
-      | mod x d == 0 && n == 0 = tens !! div x d
-      | mod x d == 0 = (toEnglish $ div x d)  ++ delim ++ orderNames !! n
-      | otherwise = (toEnglish $ div x d * d) ++ delim ++ (toEnglish $ mod x d)
-      where n = length (takeWhile (x >=) orders) - 1
-            d = orders !! n
-            delim = if n == 0 then "-" else " "
-            orders = 10:100:[1000 ^ x | x <- [1..]]
-            ones = words "zero one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen sixteen seventeen eighteen nineteen"
-            tens = words "zero ten twenty thirty forty fifty sixty seventy eighty ninety"
-            orderNames = words "ten hundred thousand million billion trillion quadrillion quintillion sextillion septillion octillion"
+<div class="code_window">
+{% highlight haskell %}
+toEnglish :: Int -> String
+toEnglish x
+  | x < 0 = "negative " ++ toEnglish (-x)
+  | x < 20 = ones !! x
+  | mod x d == 0 && n == 0 = tens !! div x d
+  | mod x d == 0 = (toEnglish $ div x d)  ++ delim ++ orderNames !! n
+  | otherwise = (toEnglish $ div x d * d) ++ delim ++ (toEnglish $ mod x d)
+  where n = length (takeWhile (x >=) orders) - 1
+        d = orders !! n
+        delim = if n == 0 then "-" else " "
+        orders = 10:100:[1000 ^ x | x <- [1..]]
+        ones = words "zero one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen sixteen seventeen eighteen nineteen"
+        tens = words "zero ten twenty thirty forty fifty sixty seventy eighty ninety"
+        orderNames = words "ten hundred thousand million billion trillion quadrillion quintillion sextillion septillion octillion"
+{% endhighlight %}
+</div>
 
 It takes an `Int` and returns a `String`. What else do you need to know? Between the types
 and the name, you probably don't need a lot more documentation to be able to use this
@@ -98,22 +91,29 @@ bounds, you could define it in this way, and any method anywhere that took a bou
 your bounds. I suppose you could do this in Ruby with a convention like `object.class.max_bound` or
 something, but it isn't a part of the core language.
 
-Algebraic Types
----------------
+### Algebraic Types
 
 In addition to the type inference system, the type system itself is just really, really fascinating.
 In a sense, everything is an enumeration.
 
-    data Day = Sunday | Monday | Tuesday | Wednesday | Thursday | Friday | Saturday
+<div class="code_window">
+{% highlight haskell %}
+data Day = Sunday | Monday | Tuesday | Wednesday | Thursday | Friday | Saturday
+{% endhighlight %}
+</div>
 
 This is an example of why you would want to implement the `Bounded` type class. Each of those options
 is a type constructor, so they're in the containing namespace (you just say `Sunday`, not `Day.Sunday`).
 
 Here's a more interesting example.
 
-    data PayMethod = CreditCard CardNumber Name ExpirationDate VerificationCode
-                   | Check CheckNumber
-                   | Cash
+<div class="code_window">
+{% highlight haskell %}
+data PayMethod = CreditCard CardNumber Name ExpirationDate VerificationCode
+               | Check CheckNumber
+               | Cash
+{% endhighlight %}
+</div>
 
 The first word in each option is the name of the constructor, but the following words are properties.
 They don't have names in this syntax, they just are what they are. The type is the name of the property,
@@ -129,8 +129,7 @@ persistance mechanisms, and relational databases in particular. It seems like ro
 serialization) would become a major topic during language design. But I understand why language-specific
 persistance mechanisms are a poor solution.
 
-Streaming
----------
+### Streaming
 
 It's always a good idea to write streaming code whenever you have a function that loads a lot of data.
 In the MRI at least, memory is never released back to the operating system once it has been allocated
@@ -141,24 +140,35 @@ In Haskell, everything is lazy by default, waiting until some other code asks fo
 before it does any work. Monad code gets executed in order (at least IO code does), but the standard
 IO operations stream automatically, making fast, memory-conscous IO code a piece of cake.
 
-    import Data.Char
-    main = interact $ map toUpper
+<div class="code_window">
+{% highlight haskell %}
+import Data.Char
+main = interact $ map toUpper
+{% endhighlight %}
+</div>
 
 This program reads standard in, and writes it out in all upper-case. Its memory usage is constant,
 no matter how big the input is.
 
-Point-free Style
-----------------
+### Point-free Style
 
 Point-free style describes function composition where the arguments are passed through without having
 to be declared. It is an example of DRY at the syntactical level. You do this in Ruby when you use
 `Symbol#to_proc` instead of a block.
 
-    list.map(&:strip)
+<div class="code_window">
+{% highlight ruby %}
+list.map(&:strip)
+{% endhighlight %}
+</div>
 
 Rather than
 
-    list.map {|s| s.strip }
+<div class="code_window">
+{% highlight ruby %}
+list.map {|s| s.strip }
+{% endhighlight %}
+</div>
 
 However, you can't use `Symbol#to_proc` when you need to do more than send a single method. I have seen
 people hack around this limitation in Ruby, but it isn't very well looked-on, and some people even denigrate
@@ -166,16 +176,24 @@ people hack around this limitation in Ruby, but it isn't very well looked-on, an
 
 In Haskell, point-free style is well-loved and well-supported. Consider the following.
 
-    withA :: String -> String
-    withA s = unlines (filter (elem 'a') (lines s))
+<div class="code_window">
+{% highlight haskell %}
+withA :: String -> String
+withA s = unlines (filter (elem 'a') (lines s))
+{% endhighlight %}
+</div>
 
 This creates a function `withA` which takes a string and returns only the lines that contain the character `'a'`.
 But this function is essentially a pipeline where the data passes through each function from right to left. (In
 an object-oriented language, it would probably read from left to right.) You can remove the parameter (and some of
 the parentheses, by rewriting the function in point-free style.
 
-    withA :: String -> String
-    withA = unlines . filter (elem 'a') . lines
+<div class="code_window">
+{% highlight haskell %}
+withA :: String -> String
+withA = unlines . filter (elem 'a') . lines
+{% endhighlight %}
+</div>
 
 Once you understand how the function composition syntax works, this is way easier to read and write than the version
 with all the parentheses. To be honest, I consider this better, but still not as intuitive as an object-oriented version

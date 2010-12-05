@@ -1,15 +1,6 @@
 ---
-type: regular
-state: draft
-tags: treetop, programming, parsing
-slug: operator-precedence
-generator: MacVim
 title: Operator Precedence in Treetop
-format: markdown
 ---
-
-Operator Precedence in Treetop
-==============================
 
 I have been using [Treetop] [1] to implement an small expression langauge, and I recently
 ran into the problem of operator precedence and associativity. I had to deal with infix
@@ -22,12 +13,12 @@ no idea how to go about it.
 In a recursive descent parser, the most naïve way to implement infix operators is to
 just put an expression on either side of an operator, and hope for the best.
 
+
     rule infix_operation
       expression operator expression
     end
 
-Associativity
--------------
+### Associativity
 
 The problem with the is left-recursion, which is discussed on the Treetop website.
 Basically, since an infix operation is an expression, referencing expression as
@@ -61,8 +52,7 @@ implementation processes right to left, so that `3 - 2 - 1 = 2`. Most operations
 be processed left to right. Exponentiation is an example of an operation that is
 processed right to left (at least in Ruby).
 
-Operator Precedence
--------------------
+### Operator Precedence
 
 On the Treetop website, there are examples of given of implementing operator precedence
 through a hierarchy of nonterminals (rules). These examples handle precedence, but they
@@ -85,8 +75,7 @@ I originally imitated this pattern in my expression language, but I didn't like
 the way I had to grow the parser to add more operators, and I couldn't figure out
 how to modify it to have correct associativity.
 
-Precedence Tables
------------------
+### Precedence Tables
 
 I had never used an operator precedence table before, but I had seen them used in tools
 such as racc and yacc. I decided that it was time to learn how they worked, and implement
@@ -103,55 +92,67 @@ I handle them elsewhere in the grammar.
   [1]: http://en.wikipedia.org/wiki/Shunting-yard_algorithm
   [2]: http://en.wikipedia.org/wiki/Reverse_Polish_Notation
 
-    def shunting_yard(input)
-      returning [] do |rpn|
-        operator_stack = []
-        input.each do |object|
-          if object.operator?
-            op1 = object
-            rpn << operator_stack.pop while (op2 = operator_stack.last) && (op1.left_associative? ? op1.precedence <= op2.precedence : op1.precedence < op2.precedence)
-            operator_stack << op1
-          else
-            rpn << object
-          end
-        end
-        rpn << operator_stack.pop until operator_stack.empty?
+<div class="code_window">
+{% highlight ruby %}
+def shunting_yard(input)
+  returning [] do |rpn|
+    operator_stack = []
+    input.each do |object|
+      if object.operator?
+        op1 = object
+        rpn << operator_stack.pop while (op2 = operator_stack.last) && (op1.left_associative? ? op1.precedence <= op2.precedence : op1.precedence < op2.precedence)
+        operator_stack << op1
+      else
+        rpn << object
       end
     end
+    rpn << operator_stack.pop until operator_stack.empty?
+  end
+end
+{% endhighlight %}
+</div>
 
 I then process the RPN output.
 
-    def rpn(input)
-      results = []
-      input.each do |object|
-        if object.operator?
-          r, l = results.pop, results.pop
-          results << object.apply(l, r)
-        else
-          results << object
-        end
-      end
-      results.first
+<div class="code_window">
+{% highlight ruby %}
+def rpn(input)
+  results = []
+  input.each do |object|
+    if object.operator?
+      r, l = results.pop, results.pop
+      results << object.apply(l, r)
+    else
+      results << object
     end
+  end
+  results.first
+end
+{% endhighlight %}
+</div>
 
 I use the following rules in the grammar to construct a list of operands and operators that
 are appropriate to pass into `shunting_yard`.
 
-    rule infix_operation
-      lhs:infix_operation_chain rhs:primary {
-        def list
-          lhs.list + [rhs]
-        end
-      }
+<div class="code_window">
+{% highlight ruby %}
+rule infix_operation
+  lhs:infix_operation_chain rhs:primary {
+    def list
+      lhs.list + [rhs]
     end
-    
-    rule infix_operation_chain
-      (primary operator)+ {
-        def list
-          elements.map {|e| [e.primary, e.operator] }.flatten
-        end
-      }
+  }
+end
+
+rule infix_operation_chain
+  (primary operator)+ {
+    def list
+      elements.map {|e| [e.primary, e.operator] }.flatten
     end
+  }
+end
+{% endhighlight %}
+</div>
 
 This is a simplified version of the implementation (it doesn't allow for whitespace, for
 instance), but it shows the basic solution. You could probably combine the two rules to
@@ -161,34 +162,37 @@ To build the actual precedence table, I created the following Module. The method
 and `#left_associative?` you see in the implementation of `shunting_yard` depend on the `lookup` method
 on `PrecedenceTable`.
 
-    module PrecedenceTable
-      Operator = Struct.new(:precedence, :associativity)
+<div class="code_window">
+{% highlight ruby %}
+module PrecedenceTable
+  Operator = Struct.new(:precedence, :associativity)
 
-      def self.lookup(operator)
-        @operators[operator]
-      end
+  def self.lookup(operator)
+    @operators[operator]
+  end
 
-      def self.op(associativity, *operators)
-        @precedence ||= 0
-        @operators ||= {}
-        operators.each do |operator|
-          @operators[operator] = Operator.new(@precedence, associativity)
-        end
-        @precedence += 1
-      end
-
-      # operator precedence, low to high
-      op :left, '||'
-      op :left, '&&'
-      op :none, '==', '!='
-      op :left, '<', '<=', '>', '>='
-      op :left, '+', '-'
-      op :left, '*', '/'
-      op :right, '^'
+  def self.op(associativity, *operators)
+    @precedence ||= 0
+    @operators ||= {}
+    operators.each do |operator|
+      @operators[operator] = Operator.new(@precedence, associativity)
     end
+    @precedence += 1
+  end
 
-Javascript
-----------
+  # operator precedence, low to high
+  op :left, '||'
+  op :left, '&&'
+  op :none, '==', '!='
+  op :left, '<', '<=', '>', '>='
+  op :left, '+', '-'
+  op :left, '*', '/'
+  op :right, '^'
+end
+{% endhighlight %}
+</div>
+
+### Javascript
 
 One of the other interesting things about the expression language I was working on is that
 it can compile itself to Javascript for execution on the client. At first, I was just writing
@@ -200,25 +204,29 @@ In order to make this work, we had to define the order of operations explicitly 
 output. To do this, we refactored our implementation of the RPN algorithm to take two lambdas, which
 tell it what to do with values and operators.
 
-    def rpn(input, operator_lambda, evaluate_lambda)
-      results = []
-      input.each do |object|
-        if object.operator?
-          r, l = results.pop, results.pop
-          results << operator_lambda.call(object, l, r)
-        else
-          results << evaluate_lambda.call(object)
-        end
-      end
-      results.first
+<div class="code_window">
+{% highlight ruby %}
+def rpn(input, operator_lambda, evaluate_lambda)
+  results = []
+  input.each do |object|
+    if object.operator?
+      r, l = results.pop, results.pop
+      results << operator_lambda.call(object, l, r)
+    else
+      results << evaluate_lambda.call(object)
     end
-    
-    def to_js(input)
-      rpn(shunting_yard(input),
-          lambda { |op,l,r| op == '^' ? "Math.pow(#{l},#{r})" : "(#{l} #{op} #{r})" }
-          lambda { |operand| operand.to_js }
-      )
-    end
+  end
+  results.first
+end
+
+def to_js(input)
+  rpn(shunting_yard(input),
+      lambda { |op,l,r| op == '^' ? "Math.pow(#{l},#{r})" : "(#{l} #{op} #{r})" }
+      lambda { |operand| operand.to_js }
+  )
+end
+{% endhighlight %}
+</div>
 
 I included this last part even though I don't expect anyone to ever have the same problem, because
 I thought it was really interesting that the RPN algorithm can be so easily modified to generate

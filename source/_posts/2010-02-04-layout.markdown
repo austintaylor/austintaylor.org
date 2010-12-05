@@ -1,15 +1,6 @@
 ---
-type: regular
-state: published
-tags: design
-slug: layout
-generator: MacVim
 title: Layout
-format: markdown
 ---
-
-Layout
-======
 
 I have been trying to learn everything I can about visual design. I am a
 programmer by trade, but I have a strong personal bent toward creating things
@@ -51,8 +42,7 @@ having any name or description to refer to it. Since that time, I’ve heard Joh
 refer to it as the “content-out” approach, which I think is a good way to
 describe it, but may bear some further explanation.
 
-Two Ways
---------
+### Two Ways
 
 The difference between the two approaches can be seen in two different ways the
 word “layout” can be used. Before I learned the new approach, I might talk
@@ -74,8 +64,7 @@ then by spreading it all out in Fireworks like so many puzzle pieces. He kept
 moving the different bits around until the arrangement started making sense.
 The design was made from content rather than containers.
 
-Space
------
+### Space
 
 One of the really important things I’ve learned about visual design is to
 appreciate empty space. Space makes a design feel clean and crisp, like when
@@ -95,8 +84,7 @@ your design practically is space. You separate things with space first, and
 then with lines only if they are needed. The result is a design that feels
 cleaner, and simpler, but no less structured.
 
-Form
-----
+### Form
 
 Another thing about the content-out approach is that the focus is on the real
 relationships between various elements on the page. The different pieces of the
@@ -108,8 +96,7 @@ content. In other words, the layout will feel natural and logical, rather than
 forced. In a sense, this is the way that form follows function in the
 discipline of web design.
 
-Redesign
---------
+### Redesign
 
 As I was contemplating these ideas, I happened to think about my experience
 redesigning the application pages in Courtyard. I consider that project to be
@@ -125,8 +112,7 @@ start rearranging it. My hope is that I will be able to apply the content-out
 approach on future projects so that I can be as effective as I was on that
 project, without out having to do the whole thing twice.
 
-Conclusion
-----------
+### Conclusion
 
 It may be that all of this seems very basic and obvious to you. It does to me
 now, but it didn’t before. I’ve heard a number of people describe the design

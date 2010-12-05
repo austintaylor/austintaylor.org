@@ -1,15 +1,6 @@
 ---
-type: regular
-state: published
-tags: programming
-slug: components
-generator: MacVim
 title: Components
-format: markdown
 ---
-
-Components
-==========
 
 There was a time—oh, how long ago it seems—when the Rails framework was not yet
 1.0 and no one we personally knew had used it for production software. In those
@@ -38,8 +29,7 @@ ever written. It was both a technical challenge and a design challenge, and I
 was pleased with the result from both perspectives. Does it matter that it was
 only used on two projects?
 
-Widgets
--------
+### Widgets
 
 Reusable components on the web are a pipe dream, I’ve been told. I do not know
 what kind of components are envisioned when someone concludes that they are not
@@ -75,8 +65,7 @@ components in Sails that I miss to this day. I’ve never used anything else tha
 was as effective for writing Javascript widgets in the context of a web
 application.
 
-HTML Generation
----------------
+### HTML Generation
 
 One of the stickier problems you face when you are deciding how to factor your
 widget code is where to generate the HTML. It will probably be easier for you
@@ -109,8 +98,7 @@ component. This makes for long and tiresome widget code, but it’s the only
 practical thing to do. I have found another approach to this problem that I’m
 using in Rails in certain situations, which I will write about at another time.
 
-Callbacks
----------
+### Callbacks
 
 Another thing thats really messy without a component framework is making calls
 back into the server that are component related. In Rails, you have to have a
@@ -142,8 +130,7 @@ marshaling strategies for any kind of object that you were likely to need, so
 in practice it felt as though you were working on the same instance in both
 parts of the component lifecycle.
 
-Conclusion
-----------
+### Conclusion
 
 Sails components are not the only thing I miss from those days. As much as I
 enjoy Ruby over Java, there’s no denying that the things we created were

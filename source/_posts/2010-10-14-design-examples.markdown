@@ -1,6 +1,6 @@
-My Problem: Searching for Design Examples
-=========================================
-
+---
+title: "My Problem: Searching for Design Examples"
+---
 
 When working on a website design, I often find that I am faced with very specific design challenges
 in much the same way that I am face with very specific code challenges when I am programming. The
