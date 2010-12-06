@@ -1,2 +1,5 @@
-= include "twitter.haml" if page.respond_to?(:twitter_user) && page.twitter_user
-= include "delicious.haml" if page.respond_to?(:delicious_user) && page.delicious_user
+.grid-3
+  = link_to image_tag('images/courtyard.png'), 'http://courtyardapp.com'
+  = include "twitter.haml" if page.respond_to?(:twitter_user) && page.twitter_user
+.grid-2
+  = link_to image_tag('images/rolemodel.png'), 'http://rolemodelsoftware.com'

@@ -1,11 +1,114 @@
-/* SASS mixins */
-@import library
+@import compass
+@import compass/reset
+@import grid
+@import syntax
 
-/* primary SASS */
-@import base
-@import theme
-@import typography
-@import layout
+!color = #333
 
-/* specific SASS */
-@import partials
+=light-font
+  font-family: "HelveticaNeue-Light", Helvetica, Arial, sans-serif
+  font-weight: lighter
+
+=bold-font
+  font-family: "HelveticaNeue-Bold", Helvetica, Arial, sans-serif
+  font-weight: bold
+
+body
+  background-color: #DDD
+  color: !color
+  +light-font
+  font-size: 14px
+  line-height: 1.25
+
+#header, #page, #footer
+  +grid-container
+  clear: both
+
+#footer .content
+  +grid(7)
+  border-top: 1px solid !color
+  padding: 4px 0px 10px 0px
+
+.blog
+  +grid(7)
+
+.article
+  border-top: 1px solid !color
+  margin-bottom: 60px
+
+a, a:visited
+  color: !color
+
+p, ul, ol
+  a, a:visited
+    color: #469
+
+h1
+  font-size: 18px
+  margin: 10px 10px 110px 10px
+
+h2
+  +bold-font
+  margin-bottom: 10px
+
+h3
+  +bold-font
+  font-size: 13px
+
+h4
+  +bold-font
+  font-size: 16px
+
+p, ul, ol, h3, .code_window
+  margin: 15px 0px
+
+h2, h4, .meta
+  a
+    text-decoration: none
+  a:hover
+    text-decoration: underline
+
+.right
+  float: right
+
+.meta
+  margin: 4px 0px
+
+#twitter
+  margin-top: 15px
+  .meta
+    display: none
+  li
+    border-bottom: 1px solid #AAA
+  li:last-child
+    border: none
+  ul
+    list-style: none
+    margin-left: 0px
+  p
+    margin: 10px 0px
+  ul
+    margin: 0px
+
+ol
+  list-style: decimal outside
+  margin-left: 36px
+
+ul
+  list-style: disc outside
+  margin-left: 24px
+
+.grid-3
+  +grid(3)
+.grid-2
+  +grid(2)
+
+code
+  +mono-font
+
+.expanded .code_window
+  width: 940px
+
+.footer
+  margin-bottom: 10px
+
